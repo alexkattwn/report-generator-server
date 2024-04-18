@@ -1,0 +1,7 @@
+POST http://localhost:5000/api/auth/sign-up
+{
+  "login": "12345",
+  "showname": "lox",
+  "identifier": "12345",
+  "code": "LOX"
+}
