@@ -1,12 +1,18 @@
 {
-    "name": "server",
+    "name": "report-generator-server",
     "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
+    "description": "Server application of the Web-based report generation module for the NuclearIDM individual dosimetric monitoring platform",
+    "main": "server.js",
     "scripts": {
-        "dev": "nodemon server.js"
+        "dev": "nodemon server.js",
+        "start": "node server.js"
     },
-    "keywords": [],
+    "keywords": [
+        "express",
+        "pg",
+        "jsonwebtoken",
+        "cors"
+    ],
     "author": "Bespalov A.I.",
     "license": "ISC",
     "dependencies": {
