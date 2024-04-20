@@ -306,7 +306,7 @@ class ReportsService {
             [id_personal]
         )
 
-        const values = await this.getIDCInfoGraphics(id_personal)
+        const lastYearValues = await this.getIDCInfoGraphics(id_personal)
 
         return {
             personInfo: personInfo.rows[0],
@@ -320,7 +320,7 @@ class ReportsService {
             littleObj: littleObj.rows[0],
             info: info.rows[0],
             headerInfo: headerInfo.rows[0],
-            values,
+            lastYearValues: lastYearValues[0],
         }
     }
 
