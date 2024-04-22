@@ -10,6 +10,7 @@ router.get(
     checkAuth,
     reportsController.getIndividualCardDose
 )
+router.get('/idc-graphics', checkAuth, reportsController.getIDCGraphics)
 router.post(
     '/collective-doses',
     checkAuth,

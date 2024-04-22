@@ -13,6 +13,18 @@ class ReportsController {
         }
     }
 
+    async getIDCGraphics(req, res, next) {
+        try {
+            const { id_personal } = req.query
+
+            const graphics = await reportsService.getIDCGraphics(id_personal)
+
+            return res.status(200).json(graphics)
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async getCollectiveDoses(req, res, next) {
         try {
             const {

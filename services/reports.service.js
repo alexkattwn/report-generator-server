@@ -1,6 +1,6 @@
 const db = require('../db')
-const ApiError = require('../exceptions/api.error')
 const calculateMonthlySum = require('../utils/calculateMonthlySum')
+const dataGraphics = require('../utils/data')
 
 class ReportsService {
     async getIndividualDoseCard(id_personal) {
@@ -306,7 +306,7 @@ class ReportsService {
             [id_personal]
         )
 
-        const lastYearValues = await this.getIDCInfoGraphics(id_personal)
+        //const lastYearValues = await this.getIDCInfoGraphics(id_personal)
 
         return {
             personInfo: personInfo.rows[0],
@@ -320,8 +320,20 @@ class ReportsService {
             littleObj: littleObj.rows[0],
             info: info.rows[0],
             headerInfo: headerInfo.rows[0],
-            lastYearValues: lastYearValues[0],
+            //lastYearValues: lastYearValues[0],
         }
+    }
+
+    getIDCGraphics(id_personal) {
+        const { areaIDCData, barIDCData } = dataGraphics
+        const area = areaIDCData.find((a) => a.id_uuid === id_personal)
+        const bar = barIDCData.find((a) => a.id_uuid === id_personal)
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({ area, bar })
+            }, 300)
+        })
     }
 
     async getIDCInfoGraphics(id_personal) {
