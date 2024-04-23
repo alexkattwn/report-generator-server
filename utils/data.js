@@ -38,6 +38,16 @@ const createArrayWithLast5Years = () => {
 const monthsArray = createMonthArray().reverse()
 const yearsArray = createArrayWithLast5Years().reverse()
 
+const normalizedValue = [
+    'эффективная доза',
+    'экспозиционная доза',
+    'поступление радионуклида',
+    'эквивалентная доза на поверхности нижней части области живота',
+    'эквивалентная доза в хрусталике глаза',
+    'эквивалентная доза в кистях и стопах',
+    'эквивалентная доза в коже',
+]
+
 const areaIDCData = [
     {
         id_uuid: 'a48cbbb3-32c6-4aaa-a428-598be79f27ad',
@@ -1311,4 +1321,662 @@ const barIDCData = [
     },
 ]
 
-module.exports = { areaIDCData, barIDCData }
+const bgPieColor = [
+    'rgba(255, 99, 132, 0.6)',
+    'rgba(54, 162, 235, 0.6)',
+    'rgba(179, 177, 175, 0.6)',
+    'rgba(255, 206, 86, 0.6)',
+    'rgba(255, 159, 64, 0.6)',
+    'rgba(153, 102, 255, 0.6)',
+    'rgba(75, 192, 192, 0.6)',
+    'rgba(166, 245, 236, 0.6)',
+]
+
+const pieIDCData = [
+    {
+        id_uuid: 'a48cbbb3-32c6-4aaa-a428-598be79f27ad',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0, 0.00019135901342413428, 0, 0.00010154657413581343,
+                        0.00010643324826032315, 0.00006133015819593442,
+                        0.0001770150218306447,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '3e71b51f-e1bb-4eff-b4b5-c7459ed811fc',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.0000724124380012027, 0.0001097162985277866, 0, 0, 0,
+                        0.00008742727629998876, 0.00019437711493044765,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'a3a5c389-37db-49b7-a3de-fc02e5790676',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00009456839997943036, 0, 0.00012691524623785353, 0, 0,
+                        0, 0.00016066289160874533,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'a5402bd0-cf60-40a1-8168-fdfa55fbbb8f',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00019820747297767, 0, 0.00018399037309579038, 0,
+                        0.00017410606825085388, 0.00007772539464347195,
+                        0.000022800055196189374,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'f0053634-351d-44c0-bd7b-11259d51215c',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00008210375437392373, 0.00007881281792817512,
+                        0.000126862566134136, 0.000024449106471788928,
+                        0.0001643535002564656, 0.00006134830746554316,
+                        0.00008790976818410808,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '32832d52-4651-4cfd-8d08-4fccfba71065',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0, 0, 0.00017739632721239912, 0.00015726696311604927, 0,
+                        0.00013968924512784803, 0.000022082576879022175,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'a9ea7efd-dc62-4936-b10a-6ab30afdc746',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        3.714072784826161e-7, 0.00010203203812528306, 0,
+                        0.00007652992932907345, 0.000022533559774163514,
+                        0.0000012870427712560862, 0.00016506282819525513,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '9e795320-05ac-4b8d-87c9-ffb2a8553249',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00012564607965689505, 0.000011298369208094306,
+                        0.00006235849572858054, 0.00006228270662229956,
+                        0.000051155907015949924, 0, 0.00011907490702886996,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'e6959562-765b-46b8-adf4-ac73666b0e3b',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0, 0.000009061699572581982, 0, 0,
+                        0.00011234021650310488, 0.00015048673793710148,
+                        0.00014815626023015877,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '91c18930-90f6-440d-811d-a0cf607caae9',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.0001925307763415653, 0.0001022419587827554, 0, 0, 0,
+                        0, 0.00019258435984844522,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '29031718-626e-47c4-9841-738e8393cbea',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00015496769210069736, 0.00009812960468619659,
+                        0.00007791204084446921, 0, 0.00011063703482383325,
+                        0.00012330125458122617, 0.00016233973200637945,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '5ffab5db-3591-4def-ab08-ea9a3773989d',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.0001848053035675425, 0, 0.00017348027863194485, 0,
+                        0.00009622517318059219, 0.00008909253693875772,
+                        0.00012627421994813358,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'ff9f3947-6ef6-4aec-b733-3bb16b400bf9',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00005363522952497908, 0.000015701652328243744,
+                        0.000002623375123095828, 0.00014320339263007088,
+                        0.00012485890796192162, 0, 0.00018531531744271908,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '4b5f855f-ca3e-4aaf-9461-6d89ebc0178a',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00010285282042662152, 0.00015624072371583472, 0, 0, 0,
+                        0.00015275462939052194, 0.00018216919725215207,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '66af964d-0c1c-41fa-bc3f-78d90821f608',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00004484965469010756, 0, 0, 0.000006751072516253132,
+                        0.000010858446002527167, 0, 0.000013908483512801606,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'f4c835d8-5d04-4cee-91c5-a0f3f4c2380f',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00004348623945414057, 0, 0.00018093343019995114, 0,
+                        0.00006740132630500168, 0, 0.0001103173551072469,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'd13beb7b-8011-477a-83a7-80ae28682e32',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.000005327768350198659, 0.00004041276708499399,
+                        0.00017795784088179127, 0, 0.00011657322098238256, 0,
+                        0.00007475114253529704,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '7e162c41-7c21-4511-9f71-01de24ae89a9',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00008525021012317128, 0.00011089010206227728,
+                        0.00017181666446928738, 0.00019726936021962713,
+                        0.00007327784250024699, 0.00006673536190103416,
+                        0.00010434006575318655,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '2bf11d19-dcbd-4926-bbe7-614b2b9bdfcd',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0, 0.00014147645636734279, 0, 0.00015929517497242988, 0,
+                        0.0000572313122172655, 0.00015556955984977834,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '686ac35f-28de-4919-83b3-7244a132cfab',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0, 0.000138514234724246, 0, 0.00011775621346301738,
+                        0.0001335709703207979, 0, 0.00013201044990997148,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'fff9f78a-1131-4898-9a30-61d226bea566',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.0001831241898631521, 0.0000011396868304493158,
+                        0.0000500038067876111, 0.00012730591032012324,
+                        0.00015895913033943653, 0.00017415811339459145,
+                        0.00016988296032966212,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'ac2d4fb6-0709-43a0-a16c-3537cd4b5b56',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00007464866785115674, 0.000057527342353986116,
+                        0.00012369631607822839, 0, 0.00014239655450898453, 0,
+                        0.000018903999043023935,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'f1796132-5e2b-4ed4-99e3-5d8473ac8164',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0, 0.00009415930458935709, 0.00013156223820891386, 0, 0,
+                        0, 0.00010195480160206567,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'a21e5ebb-846f-4842-a3a1-380440c1e19e',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00018450374200475826, 0, 0, 0, 0,
+                        0.000031723505001210263, 0.00007891449050069746,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '2f02ec00-58dd-40b1-a74c-a4723dac4107',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00009630676445763742, 0.0001475258104206986,
+                        0.0001303803773087171, 0.000047207096810808926,
+                        0.00014416292030686506, 0.0001600102968732056,
+                        0.00017826928053696052,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '87c8036c-275e-4488-a0d7-6adae9d6fdd1',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0, 0, 0, 0, 0.00006726694723293205,
+                        0.00005612926202464319, 0.00004661710657276483,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '59468f00-12d1-4b0b-8057-5cd2b4baf38c',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00018403872016942114, 0.000020258043381522975,
+                        0.00005561167498281812, 0.000005655702388911887,
+                        0.00013832380633039946, 0.00010444515231083358,
+                        0.00018334934395482528,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '89e3aabb-8ecc-45a8-a5c8-4e7f24004687',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00001345679452672286, 0.00008892696541617716,
+                        0.00003544011839809365, 0.00011434824008724399,
+                        0.00013820758014013382, 0.000057715044482933035,
+                        0.00011195601134461227,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '1817c646-7e2b-4ddb-bf01-dc1e5fd9f98d',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00016591285454010564, 0.00005965337133976419,
+                        0.00015042131771884773, 0.000026371709728853123,
+                        0.0001695841841728412, 0.0001290121165988009,
+                        0.000006698762311444373,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '2603a5e5-ac4f-4385-af2a-3cd7e7f083f1',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0, 0, 0.00003421458938913728, 0.00013875223073667078, 0,
+                        0.00016365175947143893, 0.00008438248754299655,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'c6e5ccba-3413-49ec-9008-c53dd3d3f519',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0, 0.0001837225333335701, 0.000046384491332348256,
+                        0.0000300401678332745, 0.00019482054453767375,
+                        0.0000015535323706504124, 0.00007181543440665816,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '1f679ae6-e8d4-464d-a5e1-488fdf8a6fb7',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        7.340081515879948e-7, 0.00010750301118548698, 0,
+                        0.00015817635684413345, 0, 0.00012674612717879469,
+                        0.00012533409075344486,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: 'f29fb133-dc95-4583-9edc-f9ec83dd501d',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00019661755817637494, 0.000053757257020645354,
+                        0.000009001820243931613, 0.00005798690369833155, 0, 0,
+                        0.00001636205513976421,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+    {
+        id_uuid: '81de7ce2-6cb8-4efb-a2c3-e4d77ec8f82a',
+        info: {
+            labels: normalizedValue,
+            datasets: [
+                {
+                    label: 'Доза',
+                    data: [
+                        0.00008150825232742528, 0.00011036109300902184,
+                        0.00015664041465210558, 0.00017585727312988803,
+                        0.00002398851437742158, 0, 0.00003960976126810949,
+                    ],
+                    backgroundColor: bgPieColor,
+                    borderColor: bgPieColor,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    },
+]
+
+module.exports = {
+    areaIDCData,
+    barIDCData,
+    pieIDCData,
+}

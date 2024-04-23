@@ -324,14 +324,17 @@ class ReportsService {
         }
     }
 
-    getIDCGraphics(id_personal) {
-        const { areaIDCData, barIDCData } = dataGraphics
+    async getIDCGraphics(id_personal) {
+        const { areaIDCData, barIDCData, pieIDCData } = dataGraphics
         const area = areaIDCData.find((a) => a.id_uuid === id_personal)
         const bar = barIDCData.find((a) => a.id_uuid === id_personal)
+        const pie = pieIDCData.find((a) => a.id_uuid === id_personal)
+
+        await db.query('SELECT * from mv_normalized_value')
 
         return new Promise((resolve) => {
             setTimeout(() => {
-                resolve({ area, bar })
+                resolve({ area, bar, pie })
             }, 300)
         })
     }
