@@ -335,7 +335,7 @@ class ReportsService {
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve({ area, bar, pie })
-            }, 300)
+            }, 100)
         })
     }
 
