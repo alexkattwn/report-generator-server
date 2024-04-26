@@ -330,12 +330,10 @@ class ReportsService {
         const bar = barIDCData.find((a) => a.id_uuid === id_personal)
         const pie = pieIDCData.find((a) => a.id_uuid === id_personal)
 
-        await db.query('SELECT * from mv_normalized_value')
-
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve({ area, bar, pie })
-            }, 100)
+            }, 0)
         })
     }
 
