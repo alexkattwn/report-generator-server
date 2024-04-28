@@ -570,6 +570,14 @@ class ReportsService {
 
         return { firstData, secondData }
     }
+
+    async getCDGraphics() {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve()
+            }, 0)
+        })
+    }
 }
 
 module.exports = new ReportsService()

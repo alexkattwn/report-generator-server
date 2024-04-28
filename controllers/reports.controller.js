@@ -54,6 +54,35 @@ class ReportsController {
             next(e)
         }
     }
+
+    async getCDGraphics(req, res) {
+        try {
+            const {
+                on_business_trips,
+                by_surveys,
+                by_receipts,
+                main_tdk,
+                additional_tdk,
+                odk,
+                date_start,
+                date_end,
+                struct,
+                age_from,
+                age_to,
+                sex_man,
+                sex_woman,
+                all_child_structures,
+                chief_orb,
+                chief_lprk_orb,
+            } = req.body
+
+            const graphics = await reportsService.getCDGraphics()
+
+            return res.status(200).json(graphics)
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 module.exports = new ReportsController()

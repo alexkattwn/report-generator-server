@@ -40,8 +40,12 @@ class FiltersService {
 
     async createFilter(name_report, name, parameters) {
         const filter = await db.query(
-            'select * from  report_filters where "name" = $1',
-            [name]
+            `
+                select rf.id_uuid, rf."name", rf.reports_id_uuid, rf.parameters  from  report_filters rf
+                join reports r on r.id_uuid = rf.reports_id_uuid 
+                where rf."name" = $1 and r."name" = $2
+            `,
+            [name, name_report]
         )
 
         if (filter.rows[0]) {
