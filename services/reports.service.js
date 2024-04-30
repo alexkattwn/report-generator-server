@@ -1,6 +1,7 @@
 const db = require('../db')
 const calculateMonthlySum = require('../utils/calculateMonthlySum')
 const dataGraphics = require('../utils/data')
+const dataCollectiveDoses = require('../utils/dataColDos')
 
 class ReportsService {
     async getIndividualDoseCard(id_personal) {
@@ -571,12 +572,118 @@ class ReportsService {
         return { firstData, secondData }
     }
 
-    async getCDGraphics() {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve()
-            }, 0)
-        })
+    async getCDGraphics(
+        on_business_trips,
+        by_surveys,
+        by_receipts,
+        main_tdk,
+        additional_tdk,
+        odk,
+        date_start,
+        date_end,
+        struct,
+        age_from,
+        age_to,
+        sex_man,
+        sex_woman,
+        all_child_structures,
+        chief_orb,
+        chief_lprk_orb
+    ) {
+        const filteredArray = dataCollectiveDoses.filterObjectsByDate(
+            dataCollectiveDoses.generedTestData,
+            new Date(date_start),
+            new Date(date_end)
+        )
+
+        const withDosesArray = dataCollectiveDoses.sumDoses(filteredArray)
+
+        const withColorsArray = dataCollectiveDoses.mergeColors(
+            withDosesArray,
+            dataCollectiveDoses.colorArray
+        )
+
+        const doughnutChartData =
+            dataCollectiveDoses.createChartData(withColorsArray)
+
+        let sex = null
+
+        if (sex_man && sex_woman) {
+            sex = null
+        } else if (sex_man) {
+            sex = 'm'
+        } else if (sex_woman) {
+            sex = 'f'
+        }
+
+        const personal = await db.query(
+            `
+                SELECT DISTINCT
+                    p.id_uuid,
+                    p.surname,
+                    p.name,
+                    p.patronymic,
+                    CASE WHEN p.sex::VARCHAR = 'f' THEN 'Жен.' ELSE 'Муж.' END as sex,
+                    p.birthday,
+                    pph.photo,
+                    pp."name" as name_post,
+                    pp.code as code_post,
+                    pc.personnel_number,
+                    pc.pass_sfz,
+                    CASE WHEN MAX(tda.set_datetime) is not null THEN 'Да' ELSE 'Нет' END as on_tda
+                FROM
+                    personal p
+                    LEFT JOIN personal_photo pph ON pph.personal_id_uuid = p.id_uuid
+                    LEFT JOIN personal_career pc ON pc.personal_id_uuid = p.id_uuid
+                    LEFT JOIN tdk_dose_account tda ON tda.career_id_uuid = pc.id_uuid
+                    LEFT JOIN personal_idcards pi ON pi.personal_id_uuid = p.id_uuid
+                    LEFT JOIN personal_posts pp on pc.post_id_uuid = pp.id_uuid
+                WHERE
+                    CASE
+                        WHEN $1::uuid is null THEN true
+                        ELSE cs_in_parent_cs(pc.company_structure_id_uuid, $1)
+                    END
+                    and case when $2::varchar is null then true else p.sex = $2 end
+                    AND CASE
+                        WHEN $3::int is null OR $4::int is null THEN true
+                        ELSE DATE_PART('year', age(current_date, p.birthday)) BETWEEN $3 AND $4
+                    END
+                GROUP BY p.id_uuid, p.surname, p.name, p.patronymic, sex, p.birthday, pph.photo, pp."name", pp.code, pc.personnel_number, pc.pass_sfz
+                `,
+            [struct, sex, +age_from, +age_to]
+        )
+
+        let horizontalBarArrayLabels = []
+        let personalDoses = []
+
+        if (personal.rows.length > 0) {
+            personal.rows.forEach((elem) => {
+                horizontalBarArrayLabels.push(
+                    `${elem.surname} ${elem.name[0]}.${elem.patronymic[0]}.`
+                )
+
+                const data = dataGraphics.barIDCData.find(
+                    (p) => p.id_uuid === elem.id_uuid
+                ).info.datasets[0].data
+                const lastElement = data[data.length - 1]
+                personalDoses.push(lastElement)
+            })
+        }
+
+        const barChartData = {
+            labels: horizontalBarArrayLabels,
+            datasets: [
+                {
+                    label: 'Суммарная доза',
+                    data: personalDoses,
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    barThickness: 15,
+                },
+            ],
+        }
+
+        return { doughnut: doughnutChartData, bar: barChartData }
     }
 }
 

@@ -16,5 +16,6 @@ router.post(
     checkAuth,
     reportsController.getCollectiveDoses
 )
+router.post('/cd-graphics', checkAuth, reportsController.getCDGraphics)
 
 module.exports = router
