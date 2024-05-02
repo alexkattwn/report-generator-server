@@ -3,6 +3,7 @@ require('dotenv').config()
 const cors = require('cors')
 const express = require('express')
 const path = require('path')
+const fileUpload = require('express-fileupload')
 
 const router = require('./routes')
 const errorMiddlware = require('./middlewares/error.middleware')
@@ -15,6 +16,7 @@ app.set('view engine', 'hbs')
 app.set('views', path.resolve(__dirname, 'views'))
 
 app.use(express.json())
+app.use(fileUpload({}))
 app.use(
     cors({
         credentials: true,
