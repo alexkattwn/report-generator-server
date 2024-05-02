@@ -24,6 +24,8 @@ app.use(
     })
 )
 
+app.use(express.static('assets'))
+
 app.use('/api', router)
 
 app.use(errorMiddlware)
