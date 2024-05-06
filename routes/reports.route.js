@@ -17,5 +17,6 @@ router.post(
     reportsController.getCollectiveDoses
 )
 router.post('/cd-graphics', checkAuth, reportsController.getCDGraphics)
+router.post('/id-graphics', checkAuth, reportsController.getIDGraphics)
 
 module.exports = router

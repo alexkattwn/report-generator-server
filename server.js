@@ -20,7 +20,7 @@ app.use(fileUpload({}))
 app.use(
     cors({
         credentials: true,
-        origin: process.env.CLIENT_URL,
+        origin: [process.env.CLIENT_URL_DEV, process.env.CLIENT_URL_PROD],
     })
 )
 
