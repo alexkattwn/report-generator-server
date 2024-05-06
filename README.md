@@ -132,12 +132,12 @@ http://localhost:5000/api/personal
 
     [
         {
-            "struct": "null",
-            "post": "null",
-            "pass_sfz": "null",
-            "personal_number": "null",
-            "doc_number": "null",
-            "contacts": "null",
+            "struct": null,
+            "post": null,
+            "pass_sfz": null,
+            "personal_number": null,
+            "doc_number": null,
+            "contacts": null,
             "page": "1",
         },
     ]
