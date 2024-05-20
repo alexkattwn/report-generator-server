@@ -7,5 +7,12 @@ const router = new Router()
 
 router.get('/', checkAuth, reportTemplatesController.getReportTemplate)
 router.post('/', checkAuth, reportTemplatesController.createReportTemplate)
+router.get(
+    '/download/:id',
+    checkAuth,
+    reportTemplatesController.downloadReportTemplate
+)
+
+router.get('/:id', checkAuth, reportTemplatesController.getById)
 
 module.exports = router
