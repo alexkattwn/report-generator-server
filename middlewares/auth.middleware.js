@@ -6,18 +6,14 @@ module.exports = function (req, res, next) {
     }
 
     try {
-        if (req.headers.authorization) {
-            const token = req.headers.authorization.split(' ')[1]
-            if (!token) {
-                return res
-                    .status(403)
-                    .json({ message: 'Пользователь не авторизован' })
-            }
-            const decodedData = jwt.verify(token, `${process.env.SECRET_TOKEN}`)
-            req.user = decodedData
-        } else {
-            console.log('Доступ запрещен')
+        const token = req.headers.authorization.split(' ')[1]
+        if (!token) {
+            return res
+                .status(403)
+                .json({ message: 'Пользователь не авторизован' })
         }
+        const decodedData = jwt.verify(token, `${process.env.SECRET_TOKEN}`)
+        req.user = decodedData
         next()
     } catch (e) {
         console.log(e)

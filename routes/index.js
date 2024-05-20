@@ -9,6 +9,7 @@ router.use('/company-structure', require('./company-structure.route'))
 router.use('/personal', require('./personal.route'))
 router.use('/filters', require('./filters.route'))
 router.use('/users-guide', require('./users-guide.route'))
+router.use('/report-templates', require('./report-templates.route'))
 
 router.get('/', (_, res) => {
     res.render('start.hbs', {
