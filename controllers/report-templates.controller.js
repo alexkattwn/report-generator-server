@@ -16,6 +16,24 @@ class ReportTemplateController {
         }
     }
 
+    async getAllTemplates(req, res, next) {
+        try {
+            const { report_name, name, page } = req.query
+
+            const limit = 5
+
+            const templates = await reportTemplatesService.getAllTemplates(
+                report_name,
+                name,
+                limit,
+                page
+            )
+            return res.status(200).json(templates)
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async createReportTemplate(req, res, next) {
         try {
             if (!req.files || !req.files.template) {
@@ -25,6 +43,7 @@ class ReportTemplateController {
             const { report_name } = req.body
 
             const template = req.files.template.data
+            const size = req.files.template.size
             const fileName = Buffer.from(
                 req.files.template.name,
                 'latin1'
@@ -38,7 +57,8 @@ class ReportTemplateController {
                     report_name,
                     template,
                     type,
-                    title
+                    title,
+                    size
                 )
 
             return res.status(200).json(newTemplate)
