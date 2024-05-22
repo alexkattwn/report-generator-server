@@ -17,8 +17,15 @@ class ReportTemplatesService {
         return templates.rows[0]
     }
 
-    async getAllTemplates(report_name, name, limit, page) {
-        const templates = await db.query(
+    async removeTemplate(id) {
+        await db.query('DELETE FROM report_templates WHERE id_uuid = $1', [id])
+        return 'успешно удалено'
+    }
+
+    async getAllTemplates(report_name, limit, page, name) {
+        let templates = []
+
+        templates = await db.query(
             `
                 select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size 
                 from report_templates r

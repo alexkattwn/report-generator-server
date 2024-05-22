@@ -24,11 +24,22 @@ class ReportTemplateController {
 
             const templates = await reportTemplatesService.getAllTemplates(
                 report_name,
-                name,
                 limit,
-                page
+                page,
+                name
             )
+
             return res.status(200).json(templates)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async removeTemplate(req, res, next) {
+        try {
+            const { id } = req.query
+            const removed = await reportTemplatesService.removeTemplate(id)
+            return res.status(200).json(removed)
         } catch (e) {
             next(e)
         }
