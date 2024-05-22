@@ -4,7 +4,7 @@ class ReportTemplatesService {
     async getReportTemplate(report_name) {
         const templates = await db.query(
             `
-                select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size 
+                select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size, r.is_selected 
                 from report_templates r
                 join reports r2 on r2.id_uuid = r.report_id_uuid 
                 where r2.name = $1
@@ -17,6 +17,40 @@ class ReportTemplatesService {
         return templates.rows[0]
     }
 
+    async selectTemplate(id) {
+        const result = await db.query(
+            'select report_id_uuid from report_templates where id_uuid = $1 limit 1',
+            [id]
+        )
+
+        const report = await db.query(
+            'select "name" from reports where id_uuid = $1 limit 1',
+            [result.rows[0].report_id_uuid]
+        )
+
+        await db.query(
+            `
+                WITH matching_reports AS (
+                    SELECT r.id_uuid
+                    FROM report_templates r
+                    JOIN reports r2 ON r2.id_uuid = r.report_id_uuid
+                    WHERE r2.name = $1
+                    ORDER BY r.date_creation DESC
+                )
+                UPDATE report_templates
+                SET is_selected = false
+                WHERE id_uuid IN (SELECT id_uuid FROM matching_reports);
+            `,
+            [report.rows[0].name]
+        )
+
+        await db.query(
+            'UPDATE public.report_templates SET is_selected=true WHERE id_uuid = $1',
+            [id]
+        )
+        return 'успешно обновлено'
+    }
+
     async removeTemplate(id) {
         await db.query('DELETE FROM report_templates WHERE id_uuid = $1', [id])
         return 'успешно удалено'
@@ -25,16 +59,30 @@ class ReportTemplatesService {
     async getAllTemplates(report_name, limit, page, name) {
         let templates = []
 
-        templates = await db.query(
-            `
-                select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size 
-                from report_templates r
-                join reports r2 on r2.id_uuid = r.report_id_uuid 
-                where r2.name = $1
-                order by r.date_creation desc
-            `,
-            [report_name]
-        )
+        if (!name) {
+            templates = await db.query(
+                `
+                    select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size, r.is_selected  
+                    from report_templates r
+                    join reports r2 on r2.id_uuid = r.report_id_uuid 
+                    where r2.name = $1
+                    order by r.date_creation desc
+                `,
+                [report_name]
+            )
+        } else {
+            templates = await db.query(
+                `
+                    select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size, r.is_selected  
+                    from report_templates r
+                    join reports r2 on r2.id_uuid = r.report_id_uuid 
+                    where r2.name = $1
+                    AND LOWER(r.title) LIKE '%' || LOWER($2) || '%'
+                    order by r.date_creation desc
+                `,
+                [report_name, name]
+            )
+        }
 
         const data = templates.rows
 
@@ -52,17 +100,33 @@ class ReportTemplatesService {
     }
 
     async createReportTemplate(report_name, template, type, title, size) {
+        await db.query(
+            `
+                WITH matching_reports AS (
+                    SELECT r.id_uuid
+                    FROM report_templates r
+                    JOIN reports r2 ON r2.id_uuid = r.report_id_uuid
+                    WHERE r2.name = $1
+                    ORDER BY r.date_creation DESC
+                )
+                UPDATE report_templates
+                SET is_selected = false
+                WHERE id_uuid IN (SELECT id_uuid FROM matching_reports);
+            `,
+            [report_name]
+        )
+
         const templates = await db.query(
             `
-                INSERT INTO report_templates (id_uuid, "template", date_creation, report_id_uuid, "type", title, size) 
-                VALUES(uuid_generate_v4(), $1, NOW(), (select r.id_uuid from reports r where r.name = $2), $3, $4, $5) returning *
+                INSERT INTO report_templates (id_uuid, "template", date_creation, report_id_uuid, "type", title, size, is_selected) 
+                VALUES(uuid_generate_v4(), $1, NOW(), (select r.id_uuid from reports r where r.name = $2), $3, $4, $5, $6) returning *
             `,
-            [template, report_name, type, title, size]
+            [template, report_name, type, title, size, true]
         )
 
         const newTemplate = await db.query(
             `
-                select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size 
+                select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size, r.is_selected  
                 from report_templates r 
                 where r.id_uuid = $1
             `,
@@ -75,7 +139,7 @@ class ReportTemplatesService {
     async downloadReportTemplate(id) {
         const result = await db.query(
             `
-                select r.id_uuid, r."template", r.date_creation, r.report_id_uuid, r."type", r.title, r.size 
+                select r.id_uuid, r."template", r.date_creation, r.report_id_uuid, r."type", r.title, r.size, r.is_selected  
                 from report_templates r 
                 where r.id_uuid = $1
             `,
@@ -88,7 +152,7 @@ class ReportTemplatesService {
     async getById(id) {
         const result = await db.query(
             `
-                select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size 
+                select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size, r.is_selected  
                 from report_templates r 
                 where r.id_uuid = $1
             `,

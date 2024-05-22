@@ -45,6 +45,16 @@ class ReportTemplateController {
         }
     }
 
+    async selectTemplate(req, res, next) {
+        try {
+            const { id } = req.query
+            const removed = await reportTemplatesService.selectTemplate(id)
+            return res.status(200).json(removed)
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async createReportTemplate(req, res, next) {
         try {
             if (!req.files || !req.files.template) {
