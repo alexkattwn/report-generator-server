@@ -1,4 +1,5 @@
 const db = require('../db')
+const ApiError = require('../exceptions/api.error')
 
 class ReportTemplatesService {
     async getReportTemplate(report_name) {
@@ -7,8 +8,7 @@ class ReportTemplatesService {
                 select r.id_uuid, r.date_creation, r.report_id_uuid, r."type", r.title, r.size, r.is_selected 
                 from report_templates r
                 join reports r2 on r2.id_uuid = r.report_id_uuid 
-                where r2.name = $1
-                order by r.date_creation desc
+                where r2.name = $1 and r.is_selected = true
                 limit 1
             `,
             [report_name]
@@ -52,6 +52,15 @@ class ReportTemplatesService {
     }
 
     async removeTemplate(id) {
+        const result = await db.query(
+            'select is_selected FROM report_templates WHERE id_uuid = $1',
+            [id]
+        )
+
+        if (result.rows[0].is_selected) {
+            throw ApiError.BadRequest('Нельзя удалить выбранный шаблон!')
+        }
+
         await db.query('DELETE FROM report_templates WHERE id_uuid = $1', [id])
         return 'успешно удалено'
     }
