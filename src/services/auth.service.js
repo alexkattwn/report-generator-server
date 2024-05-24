@@ -55,6 +55,8 @@ class AuthService {
                 userIndentifier.rows[0].id_uuid,
             ]
         )
+
+        return 'Регистрация прошла успешно!'
     }
 
     async login(login, identifier) {

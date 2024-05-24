@@ -12,9 +12,6 @@ const PORT = process.env.PORT || 5000
 
 const app = express()
 
-app.set('view engine', 'hbs')
-app.set('views', path.resolve(__dirname, 'views'))
-
 app.use(express.json())
 app.use(fileUpload({}))
 app.use(
@@ -23,8 +20,6 @@ app.use(
         origin: [process.env.CLIENT_URL_DEV, process.env.CLIENT_URL_PROD],
     })
 )
-
-app.use(express.static('assets'))
 
 app.use('/api', router)
 

@@ -12,9 +12,10 @@ router.use('/users-guide', require('./users-guide.route'))
 router.use('/report-templates', require('./report-templates.route'))
 
 router.get('/', (_, res) => {
-    res.render('start.hbs', {
-        message: 'Добро пожаловать в API',
-    })
+    res.send('API запущено')
+    // res.render('start', {
+    //     message: 'Добро пожаловать в API',
+    // })
 })
 
 module.exports = router
