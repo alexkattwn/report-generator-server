@@ -28,25 +28,43 @@ class ReportsController {
     async getCollectiveDoses(req, res, next) {
         try {
             const {
-                start_time,
-                end_time,
-                start_age,
-                end_age,
-                sex,
-                include_children,
-                dose_types,
+                on_business_trips,
+                by_surveys,
+                by_receipts,
+                main_tdk,
+                additional_tdk,
+                odk,
+                date_start,
+                date_end,
                 struct,
+                age_from,
+                age_to,
+                sex_man,
+                sex_woman,
+                all_child_structures,
+                chief_orb,
+                chief_lprk_orb,
+                id_struct,
             } = req.body
 
             const report = await reportsService.getCollectiveDoses(
-                start_time,
-                end_time,
-                start_age,
-                end_age,
-                sex,
-                include_children,
-                dose_types,
-                struct
+                on_business_trips,
+                by_surveys,
+                by_receipts,
+                main_tdk,
+                additional_tdk,
+                odk,
+                date_start,
+                date_end,
+                struct,
+                age_from,
+                age_to,
+                sex_man,
+                sex_woman,
+                all_child_structures,
+                chief_orb,
+                chief_lprk_orb,
+                id_struct
             )
 
             return res.status(200).json(report)

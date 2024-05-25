@@ -2,6 +2,7 @@ const db = require('../db')
 const calculateMonthlySum = require('../utils/calculateMonthlySum')
 const dataGraphics = require('../utils/data')
 const dataCollectiveDoses = require('../utils/dataColDos')
+const dateFormats = require('../utils/dateFormats')
 
 class ReportsService {
     async getIndividualDoseCard(id_personal) {
@@ -355,221 +356,107 @@ class ReportsService {
     }
 
     async getCollectiveDoses(
-        start_time,
-        end_time,
-        start_age,
-        end_age,
-        sex,
-        include_children,
-        dose_types,
-        struct
+        on_business_trips,
+        by_surveys,
+        by_receipts,
+        main_tdk,
+        additional_tdk,
+        odk,
+        date_start,
+        date_end,
+        struct,
+        age_from,
+        age_to,
+        sex_man,
+        sex_woman,
+        all_child_structures,
+        chief_orb,
+        chief_lprk_orb,
+        id_struct
     ) {
-        console.log(
-            start_time,
-            end_time,
-            start_age,
-            end_age,
-            sex,
-            include_children,
-            dose_types,
-            struct
-        )
-        const firstData = await db.query(
-            `
-            SELECT *
-                FROM (
-                    SELECT
-                        cs.id_uuid AS id_uuid,
-                        cs.name AS cs_name,
-                        a.code_unit AS mnv_code,
-                        TRUNC(a.sum_value, a.prec) AS sum_value,
-                        TRUNC(a.max_value, a.prec) AS max_value,
-                        TRUNC(a.avg_value, a.prec) AS avg_value,
-                        get_count_dose_account_by_company(cs_id_uuid, $1::VARCHAR, $2::VARCHAR, $3, $4, $5, $6 != 'n') AS cnt_du,
-                        get_count_mv_by_company(cs_id_uuid, $1::VARCHAR, $2::VARCHAR, $3, $4, $5, $7, $6 != 'n') AS cnt_mv
-                    FROM (
-                        WITH all_data AS (
-                            SELECT
-                                p.id_uuid AS p_id_uuid,
-                                mnv.code,
-                                CONCAT(mnv.code, ', ', mnv.unit_of_measure) AS code_unit,
-                                mnv.precision AS prec,
-                                get_children_cs_by_parent_and_current(cs.id_uuid, $8::UUID) AS cs_id_uuid,
-                                SUM(
-                                    mv_calc_person_value(
-                                        p.id_uuid,
-                                        $1::TIMESTAMP,
-                                        $2::TIMESTAMP,
-                                        mnv.id_uuid,
-                                        FALSE,
-                                        $7 LIKE '%odk%',
-                                        $7 LIKE '%before%',
-                                        $7 LIKE '%busines%',
-                                        $7 LIKE '%fixed%',
-                                        $7 LIKE '%add%',
-                                        $7 LIKE '%exam%',
-                                        $7 LIKE '%fixed%'
-                                    )
-                                ) AS valueSum
-                            FROM
-                                personal p
-                                JOIN personal_career pc ON pc.personal_id_uuid = p.id_uuid
-                                JOIN companies_structure cs ON cs.id_uuid = pc.company_structure_id_uuid
-                                JOIN mv_normalized_value mnv ON TRUE
-                            WHERE
-                                pc.start_datetime <= $2::TIMESTAMP
-                                AND (pc.end_datetime IS NULL OR pc.end_datetime >= $1::TIMESTAMP)
-                                AND get_children_cs_by_parent_and_current(cs.id_uuid, $8::UUID) IS NOT NULL
-                            GROUP BY
-                                p.id_uuid,
-                                mnv.code,
-                                cs.id_uuid,
-                                mnv.id_uuid
-                        )
-                        SELECT
-                            all_data.prec,
-                            cs_id_uuid,
-                            all_data.code AS mnv_code,
-                            all_data.code_unit,
-                            SUM(valuesum) AS sum_value,
-                            AVG(valuesum) AS avg_value,
-                            MAX(valuesum) AS max_value
-                        FROM
-                            all_data
-                            JOIN companies_structure cs ON cs.id_uuid = cs_id_uuid
-                        WHERE
-                            (valuesum IS NOT NULL OR all_data.code LIKE 'E')
-                        GROUP BY
-                            cs_id_uuid,
-                            all_data.code,
-                            all_data.prec,
-                            all_data.code_unit
-                        ORDER BY
-                            cs_id_uuid
-                    ) a
-                    JOIN companies_structure cs ON cs.id_uuid = a.cs_id_uuid
-                ) b
-                WHERE
-                    cnt_du != 0;
-            `,
-            [
-                start_time,
-                end_time,
-                start_age,
-                end_age,
-                sex,
-                include_children,
-                dose_types,
-                struct,
-            ]
+        const filteredArray = dataCollectiveDoses.filterObjectsByDate(
+            dataCollectiveDoses.generedTestData,
+            new Date(date_start),
+            new Date(date_end)
         )
 
-        const secondData = await db.query(
+        const withDosesArray = dataCollectiveDoses.sumDoses(filteredArray)
+
+        const structDoses = withDosesArray.find((el) => el.name === struct)
+
+        let sex = null
+
+        if (sex_man && sex_woman) {
+            sex = null
+        } else if (sex_man) {
+            sex = 'm'
+        } else if (sex_woman) {
+            sex = 'f'
+        }
+
+        const personal = await db.query(
             `
-            SELECT *
-                FROM (
-                    SELECT
-                        cs.id_uuid AS ps_id,
-                        cs.name AS company,
-                        a.code_unit AS code,
-                        a.precision AS precision,
-                        a.sum_value AS valuesum,
-                        a.max_value AS valuemax,
-                        a.avg_value AS valueavg,
-                        get_count_mv_by_company(
-                            cs_id_uuid,
-                            $1 AS start_time,
-                            $2 AS end_time,
-                            $3 AS start_age,
-                            $4 AS end_age,
-                            $5 AS sex,
-                            $6 AS dose_type,
-                            cs_id_uuid != $7::UUID AS selected_object
-                        ) AS cnt_mv,
-                        get_count_dose_account_by_company(
-                            cs_id_uuid,
-                            $1 AS start_time,
-                            $2 AS end_time,
-                            $3 AS start_age,
-                            $4 AS end_age,
-                            $5 AS sex,
-                            cs_id_uuid != $7::UUID AS selected_object
-                        ) AS cnt_du
-                    FROM (
-                        WITH all_data AS (
-                            SELECT
-                                p.id_uuid AS p_id_uuid,
-                                mnv.code,
-                                CONCAT(mnv.code, ', ', mnv.unit_of_measure) AS code_unit,
-                                mnv.precision,
-                                CASE
-                                    WHEN cs.id_uuid = $7::UUID THEN cs.id_uuid
-                                    ELSE get_children_cs_by_parent_and_current(cs.id_uuid, $7::UUID)
-                                END AS cs_id_uuid,
-                                SUM(
-                                    mv_calc_person_value(
-                                        p.id_uuid,
-                                        $1::TIMESTAMP AS start_time,
-                                        $2::TIMESTAMP AS end_time,
-                                        mnv.id_uuid,
-                                        FALSE,
-                                        $6 LIKE '%odk%' AS is_odk,
-                                        $6 LIKE '%before%' AS is_before,
-                                        $6 LIKE '%busines%' AS is_busines,
-                                        $6 LIKE '%fixed%' AS is_fixed,
-                                        $6 LIKE '%add%' AS is_add,
-                                        $6 LIKE '%exam%' AS is_exam,
-                                        $6 LIKE '%fixed%' AS is_fixed
-                                    )
-                                ) AS valueSum
-                            FROM
-                                personal p
-                                JOIN personal_career pc ON pc.personal_id_uuid = p.id_uuid
-                                JOIN companies_structure cs ON cs.id_uuid = pc.company_structure_id_uuid
-                                JOIN mv_normalized_value mnv ON TRUE
-                            WHERE
-                                pc.start_datetime <= $2::TIMESTAMP
-                                AND (pc.end_datetime IS NULL OR pc.end_datetime >= $1::TIMESTAMP)
-                                AND (
-                                    get_children_cs_by_parent_and_current(cs.id_uuid, $7::UUID) IS NOT NULL
-                                    OR cs.id_uuid = $7::UUID
-                                )
-                            GROUP BY
-                                p.id_uuid,
-                                mnv.code,
-                                cs.id_uuid,
-                                mnv.id_uuid
-                        )
-                        SELECT
-                            all_data.precision,
-                            cs_id_uuid,
-                            all_data.code AS mnv_code,
-                            all_data.code_unit,
-                            SUM(valuesum) AS sum_value,
-                            AVG(valuesum) AS avg_value,
-                            MAX(valuesum) AS max_value
-                        FROM
-                            all_data
-                            JOIN companies_structure cs ON cs.id_uuid = cs_id_uuid
-                        WHERE
-                            (valuesum IS NOT NULL OR all_data.code LIKE 'E')
-                        GROUP BY
-                            cs_id_uuid,
-                            all_data.code,
-                            all_data.precision,
-                            all_data.code_unit
-                        ORDER BY
-                            cs_id_uuid
-                    ) a
-                    JOIN companies_structure cs ON cs.id_uuid = a.cs_id_uuid
-                ) b
+                SELECT DISTINCT
+                    p.id_uuid,
+                    p.surname,
+                    p.name,
+                    p.patronymic,
+                    CASE WHEN p.sex::VARCHAR = 'f' THEN 'Жен.' ELSE 'Муж.' END as sex,
+                    p.birthday,
+                    pph.photo,
+                    pp."name" as name_post,
+                    pp.code as code_post,
+                    pc.personnel_number,
+                    pc.pass_sfz,
+                    CASE WHEN MAX(tda.set_datetime) is not null THEN 'Да' ELSE 'Нет' END as on_tda
+                FROM
+                    personal p
+                    LEFT JOIN personal_photo pph ON pph.personal_id_uuid = p.id_uuid
+                    LEFT JOIN personal_career pc ON pc.personal_id_uuid = p.id_uuid
+                    LEFT JOIN tdk_dose_account tda ON tda.career_id_uuid = pc.id_uuid
+                    LEFT JOIN personal_idcards pi ON pi.personal_id_uuid = p.id_uuid
+                    LEFT JOIN personal_posts pp on pc.post_id_uuid = pp.id_uuid
                 WHERE
-                    cnt_du != 0;
-            `,
-            [start_time, end_time, start_age, end_age, sex, dose_types, struct]
+                    CASE
+                        WHEN $1::uuid is null THEN true
+                        ELSE cs_in_parent_cs(pc.company_structure_id_uuid, $1)
+                    END
+                    and case when $2::varchar is null then true else p.sex = $2 end
+                    AND CASE
+                        WHEN $3::int is null OR $4::int is null THEN true
+                        ELSE DATE_PART('year', age(current_date, p.birthday)) BETWEEN $3 AND $4
+                    END
+                GROUP BY p.id_uuid, p.surname, p.name, p.patronymic, sex, p.birthday, pph.photo, pp."name", pp.code, pc.personnel_number, pc.pass_sfz
+                `,
+            [id_struct, sex, +age_from, +age_to]
         )
 
-        return { firstData, secondData }
+        return {
+            struct,
+            date_creation: dateFormats.formatDateAndTime(`${new Date()}`),
+            date_start: dateFormats.reverseDate(date_start),
+            date_end: dateFormats.reverseDate(date_end),
+            registered: personal.rowCount,
+            measured: personal.rowCount > 0 ? 1 : 0,
+            chief_orb,
+            chief_lprk_orb,
+            e_value:
+                personal.rowCount > 0
+                    ? Number((structDoses.dose / 8) * 2).toFixed(6)
+                    : 0,
+            he_value:
+                personal.rowCount > 0
+                    ? Number(structDoses.dose / 8).toFixed(6)
+                    : 0,
+            hl_value:
+                personal.rowCount > 0
+                    ? Number((structDoses.dose / 8) * 3).toFixed(6)
+                    : 0,
+            hs_value:
+                personal.rowCount > 0
+                    ? Number(structDoses.dose / 8).toFixed(6)
+                    : 0,
+        }
     }
 
     async getCDGraphics(
