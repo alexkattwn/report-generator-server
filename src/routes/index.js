@@ -13,9 +13,6 @@ router.use('/report-templates', require('./report-templates.route'))
 
 router.get('/', (_, res) => {
     res.send('API запущено')
-    // res.render('start', {
-    //     message: 'Добро пожаловать в API',
-    // })
 })
 
 module.exports = router
