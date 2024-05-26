@@ -3,6 +3,7 @@ const calculateMonthlySum = require('../utils/calculateMonthlySum')
 const dataGraphics = require('../utils/data')
 const dataCollectiveDoses = require('../utils/dataColDos')
 const dateFormats = require('../utils/dateFormats')
+const calculateAge = require('../utils/calculateAge')
 
 class ReportsService {
     async getIndividualDoseCard(id_personal) {
@@ -571,6 +572,125 @@ class ReportsService {
         }
 
         return { doughnut: doughnutChartData, bar: barChartData }
+    }
+
+    async getIndividualDoses(
+        on_business_trips,
+        by_surveys,
+        by_receipts,
+        main_tdk,
+        additional_tdk,
+        odk,
+        date_start,
+        date_end,
+        struct,
+        age_from,
+        age_to,
+        sex_man,
+        sex_woman,
+        all_child_structures,
+        chief_orb,
+        chief_group_idc,
+        id_struct
+    ) {
+        const filteredArray = dataCollectiveDoses.filterObjectsByDate(
+            dataCollectiveDoses.generedTestData,
+            new Date(date_start),
+            new Date(date_end)
+        )
+
+        const withDosesArray = dataCollectiveDoses.sumDoses(filteredArray)
+
+        const structDoses = withDosesArray.find((el) => el.name === struct)
+
+        let sex = null
+
+        if (sex_man && sex_woman) {
+            sex = null
+        } else if (sex_man) {
+            sex = 'm'
+        } else if (sex_woman) {
+            sex = 'f'
+        }
+
+        const personal = await db.query(
+            `
+                SELECT DISTINCT
+                    p.id_uuid,
+                    p.surname,
+                    p.name,
+                    p.patronymic,
+                    CASE WHEN p.sex::VARCHAR = 'f' THEN 'Жен.' ELSE 'Муж.' END as sex,
+                    p.birthday,
+                    pph.photo,
+                    pp."name" as name_post,
+                    pp.code as code_post,
+                    pc.personnel_number,
+                    pc.pass_sfz,
+                    CASE WHEN MAX(tda.set_datetime) is not null THEN 'Да' ELSE 'Нет' END as on_tda
+                FROM
+                    personal p
+                    LEFT JOIN personal_photo pph ON pph.personal_id_uuid = p.id_uuid
+                    LEFT JOIN personal_career pc ON pc.personal_id_uuid = p.id_uuid
+                    LEFT JOIN tdk_dose_account tda ON tda.career_id_uuid = pc.id_uuid
+                    LEFT JOIN personal_idcards pi ON pi.personal_id_uuid = p.id_uuid
+                    LEFT JOIN personal_posts pp on pc.post_id_uuid = pp.id_uuid
+                WHERE
+                    CASE
+                        WHEN $1::uuid is null THEN true
+                        ELSE cs_in_parent_cs(pc.company_structure_id_uuid, $1)
+                    END
+                    and case when $2::varchar is null then true else p.sex = $2 end
+                    AND CASE
+                        WHEN $3::int is null OR $4::int is null THEN true
+                        ELSE DATE_PART('year', age(current_date, p.birthday)) BETWEEN $3 AND $4
+                    END
+                GROUP BY p.id_uuid, p.surname, p.name, p.patronymic, sex, p.birthday, pph.photo, pp."name", pp.code, pc.personnel_number, pc.pass_sfz
+                `,
+            [id_struct, sex, +age_from, +age_to]
+        )
+
+        const structCode = await db.query(
+            'SELECT code FROM companies_structure where name = $1',
+            [struct]
+        )
+
+        let personalDoses = [...personal.rows]
+
+        if (personal.rows.length > 0) {
+            personal.rows.forEach((elem, i) => {
+                const data = dataGraphics.barIDCData.find(
+                    (p) => p.id_uuid === elem.id_uuid
+                ).info.datasets[0].data
+                const lastElement = data[data.length - 1]
+                personalDoses[i].dose_e = Number((lastElement / 8) * 4).toFixed(
+                    6
+                )
+                personalDoses[i].dose_hk = Number(
+                    (lastElement / 8) * 1
+                ).toFixed(6)
+                personalDoses[i].dose_hs = Number(
+                    (lastElement / 8) * 1
+                ).toFixed(6)
+                personalDoses[i].dose_hh = Number(
+                    (lastElement / 8) * 1
+                ).toFixed(6)
+                personalDoses[i].age = calculateAge(personalDoses[i].birthday)
+                personalDoses[i].struct_code = structCode.rows[0].code
+            })
+        }
+
+        return {
+            struct,
+            date_creation: dateFormats.formatDateAndTime(`${new Date()}`),
+            date_start: dateFormats.reverseDate(date_start),
+            date_end: dateFormats.reverseDate(date_end),
+            registered: personal.rowCount,
+            measured: personal.rowCount > 0 ? 1 : 0,
+            chief_orb,
+            chief_group_idc,
+            personalDoses,
+        }
     }
 
     async getIDGraphics(
