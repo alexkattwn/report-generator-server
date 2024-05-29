@@ -29,3 +29,5 @@ app.listen(PORT, () =>
         `[server]: Server is running at http://localhost:${PORT}/api 🚀 🗿🗿🗿`
     )
 )
+
+module.exports = app
